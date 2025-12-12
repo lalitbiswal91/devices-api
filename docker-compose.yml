@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: devices-postgres
+    environment:
+      POSTGRES_USER: devices
+      POSTGRES_PASSWORD: devices123
+      POSTGRES_DB: devicesdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
