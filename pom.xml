@@ -65,6 +65,7 @@
 		</dependency>
 
 		<!-- Spring Boot integration for Testcontainers -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-testcontainers</artifactId>
