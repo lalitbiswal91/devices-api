@@ -1,5 +1,6 @@
 package com.lalit.devices.service.impl;
 
+import com.lalit.devices.exception.DeviceNotFoundException;
 import com.lalit.devices.model.Device;
 import com.lalit.devices.model.DeviceState;
 import com.lalit.devices.repository.DeviceRepository;
@@ -23,7 +24,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device getById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Device not found"));
+                .orElseThrow(() -> new DeviceNotFoundException(id));
     }
 
     @Override

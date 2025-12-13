@@ -1,3 +1,30 @@
 spring:
   application:
     name: devices-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devicesdb
+    username: devices
+    password: devices123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+    open-in-view: false
+    show-sql: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false  # ISO date format in JSON
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
