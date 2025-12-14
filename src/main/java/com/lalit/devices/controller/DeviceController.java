@@ -3,6 +3,7 @@ package com.lalit.devices.controller;
 
 import com.lalit.devices.dto.CreateDeviceRequest;
 import com.lalit.devices.dto.DeviceResponse;
+import com.lalit.devices.dto.UpdateDeviceRequest;
 import com.lalit.devices.model.Device;
 import com.lalit.devices.model.DeviceState;
 import com.lalit.devices.service.DeviceService;
@@ -17,22 +18,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeviceController {
 
-    private final DeviceService service;
+    private final DeviceService deviceService;
 
     @PostMapping
-    public DeviceResponse create(@Valid @RequestBody CreateDeviceRequest request) {
-        Device device = new Device();
-        device.setName(request.name());
-        device.setBrand(request.brand());
-        device.setState(request.state());
-
-        Device saved = service.create(device);
-        return toResponse(saved);
+    public DeviceResponse create(@Valid @RequestBody CreateDeviceRequest createDeviceRequest) {
+        Device createdDevice = deviceService.create(createDeviceRequest);
+        return toResponse(createdDevice);
     }
 
     @GetMapping("/{id}")
     public DeviceResponse getById(@PathVariable Long id) {
-        return toResponse(service.getById(id));
+        return toResponse(deviceService.getById(id));
     }
 
     @GetMapping
@@ -41,26 +37,46 @@ public class DeviceController {
             @RequestParam(required = false) DeviceState state
     ) {
         if (brand != null) {
-            return service.getByBrand(brand).stream()
+            return deviceService.getByBrand(brand).stream()
                     .map(this::toResponse)
                     .toList();
         }
 
         if (state != null) {
-            return service.getByState(state).stream()
+            return deviceService.getByState(state).stream()
                     .map(this::toResponse)
                     .toList();
         }
 
-        return service.getAll().stream()
+        return deviceService.getAll().stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    /* ========= Full Update ========= */
+    @PutMapping("/{id}")
+    public DeviceResponse update(
+            @PathVariable Long id,
+            @RequestBody UpdateDeviceRequest request
+    ) {
+        return toResponse(deviceService.update(id, request));
+    }
+
+    /* ========= PArtial Update ========= */
+    @PatchMapping("/{id}")
+    public DeviceResponse partialUpdate(
+            @PathVariable Long id,
+            @RequestBody UpdateDeviceRequest request
+    ) {
+        return toResponse(deviceService.partialUpdate(id, request));
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        deviceService.delete(id);
     }
+
+
 
     private DeviceResponse toResponse(Device device) {
         return new DeviceResponse(

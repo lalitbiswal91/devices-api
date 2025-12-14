@@ -1,12 +1,6 @@
 package com.lalit.devices.exception;
 
-import java.time.Instant;
-
 public record ApiError(
-        String message,
-        Instant timestamp
+        String message
 ) {
-    public ApiError(String message) {
-        this(message, Instant.now());
-    }
 }
