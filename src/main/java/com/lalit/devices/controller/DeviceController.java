@@ -9,10 +9,12 @@ import com.lalit.devices.model.DeviceState;
 import com.lalit.devices.service.DeviceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/devices")
 @RequiredArgsConstructor
@@ -22,12 +24,16 @@ public class DeviceController {
 
     @PostMapping
     public DeviceResponse create(@Valid @RequestBody CreateDeviceRequest createDeviceRequest) {
+        log.info("Creating device: {} - {}", createDeviceRequest.name(), createDeviceRequest.brand());
         Device createdDevice = deviceService.create(createDeviceRequest);
-        return toResponse(createdDevice);
+        DeviceResponse deviceResponse = toResponse(createdDevice);
+        log.info("Created device with id: {}", deviceResponse.id());
+        return deviceResponse;
     }
 
     @GetMapping("/{id}")
     public DeviceResponse getById(@PathVariable Long id) {
+        log.info("Fetching device with id: {}", id);
         return toResponse(deviceService.getById(id));
     }
 
@@ -36,46 +42,51 @@ public class DeviceController {
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) DeviceState state
     ) {
+        log.info("Fetching devices with brand={} state={}", brand, state);
+        List<DeviceResponse> responses;
+
         if (brand != null) {
-            return deviceService.getByBrand(brand).stream()
+            responses = deviceService.getByBrand(brand).stream()
+                    .map(this::toResponse)
+                    .toList();
+        } else if (state != null) {
+            responses = deviceService.getByState(state).stream()
+                    .map(this::toResponse)
+                    .toList();
+        } else {
+            responses = deviceService.getAll().stream()
                     .map(this::toResponse)
                     .toList();
         }
+        log.info("Fetched {} devices", responses.size());
+        return responses;
 
-        if (state != null) {
-            return deviceService.getByState(state).stream()
-                    .map(this::toResponse)
-                    .toList();
-        }
-
-        return deviceService.getAll().stream()
-                .map(this::toResponse)
-                .toList();
     }
 
-    /* ========= Full Update ========= */
     @PutMapping("/{id}")
     public DeviceResponse update(
             @PathVariable Long id,
             @RequestBody UpdateDeviceRequest request
     ) {
+        log.info("Updating device {} with data: {}", id, request);
         return toResponse(deviceService.update(id, request));
     }
 
-    /* ========= PArtial Update ========= */
     @PatchMapping("/{id}")
     public DeviceResponse partialUpdate(
             @PathVariable Long id,
             @RequestBody UpdateDeviceRequest request
     ) {
+        log.info("Partially updating device {} with data: {}", id, request);
         return toResponse(deviceService.partialUpdate(id, request));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+        log.info("Deleting device with id: {}", id);
         deviceService.delete(id);
+        log.info("Deleted device with id: {}", id);
     }
-
 
 
     private DeviceResponse toResponse(Device device) {
