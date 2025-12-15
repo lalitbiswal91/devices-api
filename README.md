@@ -3,6 +3,8 @@
 - A Spring Boot REST API for managing devices, built with Java 21.
   The application supports creation, updation, partial updation retrival, and deleting devices with persistence backed by PostgreSQL.
 
+## ✨ Technology Used
+
 - **Java 21**
 - **Spring Boot**
 - **Spring Data JPA**
