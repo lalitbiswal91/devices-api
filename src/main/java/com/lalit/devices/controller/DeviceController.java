@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @Slf4j
 @RestController
 @RequestMapping("/api/devices")
@@ -25,8 +26,10 @@ public class DeviceController {
     @PostMapping
     public DeviceResponse create(@Valid @RequestBody CreateDeviceRequest createDeviceRequest) {
         log.info("Creating device: {} - {}", createDeviceRequest.name(), createDeviceRequest.brand());
+
         Device createdDevice = deviceService.create(createDeviceRequest);
         DeviceResponse deviceResponse = toResponse(createdDevice);
+
         log.info("Created device with id: {}", deviceResponse.id());
         return deviceResponse;
     }
@@ -66,7 +69,7 @@ public class DeviceController {
     @PutMapping("/{id}")
     public DeviceResponse update(
             @PathVariable Long id,
-            @RequestBody UpdateDeviceRequest request
+            @Valid @RequestBody UpdateDeviceRequest request
     ) {
         log.info("Updating device {} with data: {}", id, request);
         return toResponse(deviceService.update(id, request));
