@@ -56,11 +56,10 @@ mvn spring-boot:run
 
 **Running Tests**
 
-```sh
-mvn test
-```
+- run DeviceControllerIT class
 
-## 📚 Device Management Service API Endpoints
+
+## 📚 Devices API Endpoints
 
 ### ➕ Create Device (**POST**)
 
@@ -137,7 +136,7 @@ DELETE /api/devices/{id}
 
 ### Get Test Coverage
 
-To generate test coverage, run the below maven command:
+- To generate test coverage, run the below maven command:
 
 ```sh
 mvn clean verify
