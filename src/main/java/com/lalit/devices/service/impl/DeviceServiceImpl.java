@@ -22,15 +22,17 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public Device create(CreateDeviceRequest createDeviceRequest) {
-        log.info("Saving new device: {} - {}", createDeviceRequest.name(), createDeviceRequest.brand());
+        log.info("Creating device with name={} brand={} state={}",
+                createDeviceRequest.name(), createDeviceRequest.brand(), createDeviceRequest.state());
 
-        Device device = new Device();
+        var device = new Device();
         device.setName(createDeviceRequest.name());
         device.setBrand(createDeviceRequest.brand());
         device.setState(createDeviceRequest.state());
-        Device createdDevice = deviceRepository.save(device);
 
-        log.info("Device saved with id {}", createdDevice.getId());
+        var createdDevice = deviceRepository.save(device);
+        log.info("Device created with id {}", createdDevice.getId());
+
         return createdDevice;
     }
 
@@ -38,14 +40,15 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device update(Long id, UpdateDeviceRequest updateDeviceRequest) {
         log.info("Updating device id: {}", id);
-        Device existingDevice = getById(id);
+        var existingDevice = getById(id);
 
         validateNameBrandWhenInUse(existingDevice, updateDeviceRequest.name(), updateDeviceRequest.brand());
 
         existingDevice.setName(updateDeviceRequest.name());
         existingDevice.setBrand(updateDeviceRequest.brand());
         existingDevice.setState(updateDeviceRequest.state());
-        Device updatedDevice = deviceRepository.save(existingDevice);
+
+        var updatedDevice = deviceRepository.save(existingDevice);
 
         log.info("Updated device id: {}", updatedDevice.getId());
         return updatedDevice;
@@ -55,24 +58,24 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device partialUpdate(Long id, UpdateDeviceRequest updateDeviceRequest) {
         log.info("Partially updating device id: {}", id);
-        Device existing = getById(id);
+        var existingDevice = getById(id);
 
-        validateNameBrandWhenInUse(existing, updateDeviceRequest.name(), updateDeviceRequest.brand());
+        validateNameBrandWhenInUse(existingDevice, updateDeviceRequest.name(), updateDeviceRequest.brand());
 
         if (updateDeviceRequest.name() != null) {
-            log.info("Updating name for device id={} from {} to {}", id, existing.getName(), updateDeviceRequest.name());
-            existing.setName(updateDeviceRequest.name());
+            log.info("Updating name for device id={} from {} to {}", id, existingDevice.getName(), updateDeviceRequest.name());
+            existingDevice.setName(updateDeviceRequest.name());
         }
         if (updateDeviceRequest.brand() != null) {
-            log.info("Updating brand for device id={} from {} to {}", id, existing.getBrand(), updateDeviceRequest.brand());
-            existing.setBrand(updateDeviceRequest.brand());
+            log.info("Updating brand for device id={} from {} to {}", id, existingDevice.getBrand(), updateDeviceRequest.brand());
+            existingDevice.setBrand(updateDeviceRequest.brand());
         }
         if (updateDeviceRequest.state() != null) {
-            log.info("Updating state for device id={} from {} to {}", id, existing.getState(), updateDeviceRequest.state());
-            existing.setState(updateDeviceRequest.state());
+            log.info("Updating state for device id={} from {} to {}", id, existingDevice.getState(), updateDeviceRequest.state());
+            existingDevice.setState(updateDeviceRequest.state());
         }
 
-        Device updatedDevice = deviceRepository.save(existing);
+        var updatedDevice = deviceRepository.save(existingDevice);
         log.info("Partial update completed for device id={}", updatedDevice.getId());
         return updatedDevice;
     }
@@ -90,7 +93,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public List<Device> getAll() {
         log.info("Fetching all devices");
-        List<Device> devices = deviceRepository.findAll();
+        var devices = deviceRepository.findAll();
         log.info("Fetched {} devices", devices.size());
         return devices;
     }
@@ -98,7 +101,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public List<Device> getByBrand(String brand) {
         log.info("Fetching devices by brand={}", brand);
-        List<Device> devicesByBrand = deviceRepository.findByBrandIgnoreCase(brand);
+        var devicesByBrand = deviceRepository.findByBrandIgnoreCase(brand);
         log.info("Found {} devices for brand={}", devicesByBrand.size(), brand);
         return devicesByBrand;
     }
@@ -106,7 +109,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public List<Device> getByState(DeviceState state) {
         log.info("Fetching devices by state={}", state);
-        List<Device> devicesByState = deviceRepository.findByState(state);
+        var devicesByState = deviceRepository.findByState(state);
         log.info("Found {} devices with state={}", devicesByState.size(), state);
         return devicesByState;
     }
@@ -115,14 +118,14 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void delete(Long id) {
         log.info("Deleting device id={}", id);
-        Device device = getById(id);
+        var existingDevice = getById(id);
 
-        if (device.getState() == DeviceState.IN_USE) {
+        if (existingDevice.getState() == DeviceState.IN_USE) {
             log.warn("Trying to delete IN_USE device id={}", id);
             throw new IllegalStateException("IN_USE devices cannot be deleted");
         }
 
-        deviceRepository.delete(device);
+        deviceRepository.delete(existingDevice);
         log.info("Device deleted successfully id={}", id);
     }
 
