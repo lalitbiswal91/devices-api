@@ -120,7 +120,7 @@ PUT /api/devices/{id}
 ### 🔄 Update Device (Partial) (**PATCH**)
 
 ```http
-PUT /api/devices/{id}
+PATCH /api/devices/{id}
 ```
 
 **Request Body**
